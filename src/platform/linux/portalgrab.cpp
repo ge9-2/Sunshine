@@ -367,12 +367,14 @@ namespace portal {
     }
 
     void init(int stream_fd, int stream_node) {
+      pw_thread_loop_lock(loop);
       fd = stream_fd;
       node = stream_node;
 
       context = pw_context_new(pw_thread_loop_get_loop(loop), NULL, 0);
       core = pw_context_connect_fd(context, dup(fd), NULL, 0);
       pw_core_add_listener(core, &core_listener, &core_events, NULL);
+      pw_thread_loop_unlock(loop);
     }
 
     void ensure_stream(platf::mem_type_e mem_type, uint32_t width, uint32_t height, uint32_t refresh_rate, struct dmabuf_format_info_t *dmabuf_infos, int n_dmabuf_infos) {
